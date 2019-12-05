@@ -1,307 +1,250 @@
-//Name:Hassan Baig
-//
-//
-//
-//
-//https://github.com/baig1405/csce314.git
-
-
-
-
-
-import java.util.ArrayList; 
+package Data;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.math.BigInteger;
 
-
+/*
+ *  Desc: This class generates primes, twin primes, and hexagon crosses using BigInteger data types.
+ */
 public class Primes {
-	// Pair class implementation.
 	
- 
 	// Member variables for containing out lists of integers, twin primes, hexagon crosses, and the pairs of twin primes that make up the hex crosses.
-		private class Pair<T> {
-			int size=10000000;	
-		    // Big Integer array for Prime Numbers
-		    BigInteger[] arr_prime=new BigInteger[size];
-		    int count1=0;
-		    
-		    // Big Integer array for Twin Prime Numbers
-		    BigInteger[] arr_twinprime=new BigInteger[size];
-		    int count2=0;
-		    
-		    // // Big Integer array for Hex Prime Numbers
-		    BigInteger[] arr_hexprime=new BigInteger[size];
-		    BigInteger[] arr_storeprime=new BigInteger[size];
-		    int count3=0;
-		    
-		    int hexcount=0;
-		    
-		    
-		    //Hex pairs separated 
-		    BigInteger[] sep1=new BigInteger[size];
-		    BigInteger[] sep2=new BigInteger[size];
-		    int sep1count=0;
-		    int sep2count=0;
-		    
-		    
-		    int length;
-		    
-		    //for numbers of twin prime
-		    int counttwinprime;
-		}
+	private ArrayList<BigInteger> primeList = new ArrayList<BigInteger>();
+	private ArrayList<Pair<BigInteger>> twinPrimeList = new ArrayList<Pair<BigInteger>>();
+	private ArrayList<Pair<BigInteger>> crossList = new ArrayList<Pair<BigInteger>>();
 		
-		
-		
-		// Add a prime to the prime list if and only iff it is not already in the list. (ignore duplicates)
-		public void addPrime(BigInteger x)
+
+	// Add a prime to the prime list if and only iff it is not already in the list. (ignore duplicates)
+	public void addPrime(BigInteger primeNumber)
+	{
+		if (!primeList.contains(primeNumber) && AKA_TEST.isPrime(primeNumber)) // adding another condition as this function is used while file loading
+			primeList.add(primeNumber);
+	}
+	
+	// add condition:
+	public boolean addCondition(BigInteger primeNumber)
+	{
+		if (!primeList.contains(primeNumber) && AKA_TEST.isPrime(primeNumber))
+			return true;
+		else
+			return false;
+	}
+	// Add a pair to the pair list 
+	public void addPair(Pair<BigInteger> pair)
+	{
+			twinPrimeList.add(pair);
+	}
+
+	// Adds a pair of BigIntegers that represent a Hexagonal Cross.
+	public void addCross(Pair<BigInteger> pair)
+	{
+		//pair.print();
+			crossList.add(pair);
+			//pair.print();
+	}
+	
+	// Empties the list of primes.
+	public void clearPrimes()
+	{
+		primeList.clear();
+	}
+	
+	// Empties the list of crosses.
+	public void clearCrosses()
+	{
+		crossList.clear();
+	}
+	
+	// Output the prime list. Each prime should be on a separate line and the total number of primes should be on the following line.
+	public void printPrimes()
+	{
+		for(BigInteger p : primeList)
 		{
-			
-			int y=0;
-			
-			for(int x=0; count1>y; y++)
-		 
+			System.out.println(p);
+		}
+		System.out.println("Total Primes: " + primeList.size());
+	}
+		
+	// Output the twin prime list. Each twin prime should be on a separate line with a comma separating them, and the total number of twin primes should be on the following line.
+	public void printTwins()
+	{
+		for(Pair<BigInteger> p : twinPrimeList)
+		{
+			System.out.println(p.left() + ", " + p.right());
+		}
+		System.out.println("Total Twins: " + twinPrimeList.size());
+	}
+		
+	// Output the hexagon cross list. Each should be on a separate line listing the two twin primes and the corresponding hexagon cross, with the total number on the following line.
+	public void printHexes()
+	{
+		for(int i = 0; i< crossList.size(); i++)
+		{
+			System.out.println("Hexagon Cross: " + crossList.get(i).left() + ", " + crossList.get(i).right());
+		}
+		System.out.println("Total Hexes: " + crossList.size());
+	}
+	
+//Generate and store a list of primes from a given starting point.
+	public void generatePrimes(BigInteger candidate, int count)
+	{
+		primeList.clear();
+
+		if (count < 1) return;
+		
+		for (int i=0; i < count; i++)
+		{
+			boolean found = false;
+			while(!found)
 			{
-				if (arr_prime[y]=x)
-			   System.out.println("Already int he list");
-				else
-			     arr_prime[y]=x
-			y++;
+				if(AKA_TEST.isPrime(candidate)) // You should implement a faster primality test! AKA TEST DONE
+				{
+					primeList.add(candidate);
+					found = true;
+				}
+				candidate = candidate.add(BigInteger.ONE);
 			}
-			
 		}
-		
-		
-		
-		
-		// Output the prime list. Each prime should be on a separate line and the total number of primes should be on the following line.
-		public void printPrimes()
-		{ 
-			int y=0;
-			System.out.println("Printing Prime Numbers Only");
-			//Count1 is the size of the arr_prime
-		   while(count1>y)
+
+	}
+	
+	// Generate and store a list of twin primes.
+	public void generateTwinPrimes()
+	{
+		twinPrimeList.clear();
+		for (int i = 0; i < primeList.size()-1; i++)
+		{
+			if (primeList.get(i+1).equals((primeList.get(i).add(BigInteger.valueOf(2)))) )
 			{
-			   System.out.println(arr_prime[y]);
-			y++;
+				twinPrimeList.add(new Pair<BigInteger>(primeList.get(i), (primeList.get(i+1))));
 			}
-		   System.out.print("Total Primes:");
-		   System.out.println(y+1);
 		}
-			
-		// Output the twin prime list. Each twin prime should be on a separate line with a comma separating them, and the total number of twin primes should be on the following line.
-		public void printTwins()
-		{  
-			String comma=",";
-			int y=0;
-			System.out.println("Printing Twin Prime Numbers");
-			   while(count2>y)
-				{
-				   System.out.print(arr_twinprime[y]+comma);
-				  System.out.print(arr_twinprime[y+1]);
-				  System.out.println();
-				  y=y+2;
-				}
-			   System.out.print("Total Twin Primes:");
-			   counttwinprime=y/2;
-			   System.out.println(y/2);
-		}
-			
-		// Output the hexagon cross list. Each should be on a separate line listing the two twin primes and the corresponding hexagon cross, with the total number on the following line.
-		public void printHexes()
+	}
+	
+	// Generate and store the hexagon crosses, along with the two twin primes that generate the hexagon cross.
+	public void generateHexPrimes()
+	{
+		crossList.clear();
+		for (int i=0; i < twinPrimeList.size()-1; i++)
 		{
+			BigInteger n = twinPrimeList.get(i).left().add(BigInteger.ONE);
 			
-			String comma=",";
-			int y=0;
-			System.out.println("Printing Hex Prime Numbers");
-			int i=0;
-		
-			   while(hexcount>y)
-				{
-				  
-				   System.out.print(arr_hexprime[y]+comma);
-				  System.out.print(arr_hexprime[y+1]);
-				  
-				  System.out.print(" and ");
-				  System.out.print(arr_hexprime[y+2]+comma);
-				  System.out.print(arr_hexprime[y+3]);
-				  
-				  
-				  System.out.print(" seperated by ");
-				  System.out.print(sep1[i]+comma);
-				  System.out.print(sep2[i]);
-				i++;
-				  System.out.println();
-				  y=y+4;
-				  
-				}
-			   
-			   System.out.print("Total Hexes");  
-			   System.out.println(hexcount/4);  
-		}
-			
-		
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
-		// Generate and store a list of primes.
-		public void generatePrimes(int count)
-		{
-			length=count;
-			int i=0;
-			int num=0;
-			
-			
-			// Generating prime numbers between 1 to given count
-			for(i=1; i<=count; i++)
+			for (int j=i+1; j < twinPrimeList.size(); j++)
 			{
-				int y=0;
-                 
-				for (num=i; num>=1; num--)
+				BigInteger twoN = twinPrimeList.get(j).left().add(BigInteger.ONE);
+				if (n.multiply(BigInteger.valueOf(2)).equals(twoN) )
 				{
-					
-					if(i%num==0)
-					{
-						y=y+1;
-						
-					}
-					
-				}
+					crossList.add(new Pair<BigInteger>(n, twoN));				
+				}		
+			}
+		}
+	}
+	
+	/*
+	 * Took help from https://stackoverflow.com/questions/18828377/biginteger-count-the-number-of-decimal-digits-in-a-scalable-method
+	 * */
+
+	// Count the number of digits in the last (and thus largest) prime.
+	public int sizeofLastPrime()
+	{
+		// get last element
+		BigInteger lastPrime = primeList.get(primeList.size()-1);
+		
+		// counting decimals
+		
+		double div = Math.log(2) / Math.log(10);
+		int largestPrimeCount = (int) (div * lastPrime.bitLength() + 1);
+		
+		if (BigInteger.TEN.pow(largestPrimeCount - 1).compareTo(lastPrime) > 0)
+			return largestPrimeCount - 1;
+		else 
+			return largestPrimeCount;
+		
+		
+	}
+	
+	// Count the number of digits in the two entries in the last (and thus largest) hexagon cross
+	public Pair<Integer> sizeofLastCross()
+	{
+		// get last element
+		Pair<BigInteger> lastCrossList = crossList.get(crossList.size() - 1);
+		BigInteger lastLeft = lastCrossList.left();
+		BigInteger lastRight = lastCrossList.right();
+		
+		// counting decimals for left
+		
+		double div = Math.log(2) / Math.log(10);
+		int largestCrossCountLeft = (int) (div * lastLeft.bitLength() + 1);
 				
-				if (y==2)
-				{
-					
-					arr_prime[count1]=BigInteger.valueOf(i);
-					 count1++;
-					 
-					
-				}
-			
-			}
-		
-		}
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
-		// Generate and store a list of twin primes.
-		public void generateTwinPrimes()
-		{
-			for (int i = 2; i <length; i++) {
-                         
+		if (BigInteger.TEN.pow(largestCrossCountLeft - 1).compareTo(lastLeft) > 0)
+			largestCrossCountLeft = largestCrossCountLeft - 1;
 				
-				//Condition to check if the number and the +2 index number is prime or not
-	            if (twin_Prime(i) && twin_Prime(i + 2)) {
-	            	
-	            	arr_twinprime[count2]=BigInteger.valueOf(i);
-	            	//System.out.println(arr[x]);
-	            	count2++;
-	            	
-	            arr_twinprime[count2]=BigInteger.valueOf(i+2);
-	           // System.out.println(arr[x]);
-	            	count2++;
-	            	
-	                //System.out.printf("(%d, %d)\n", i, i + 2);
-	            }
-	        }
-	    
-		}
+		// counting decimals for left
 		
+		int largestCrossCountRight = (int) (div * lastRight.bitLength() + 1);
+				
+		if (BigInteger.TEN.pow(largestCrossCountRight - 1).compareTo(lastRight) > 0)
+			largestCrossCountRight = largestCrossCountRight - 1;
 		
-		//Bollean function just to check if the number index i and i+2 is a prime
-	    public static boolean twin_Prime(long n) {
-
-	        if (n < 2) return false;
-
-	        for (int i = 2; i <= n / 2; i++) {
-
-	            if (n % i == 0) return false;
-	        }
-	        return true;
-	    }
-			
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////		
-
-// Generating Hex Primes	    
-	    
-	    
-		// Generate and store the hexagon crosses, along with the two twin primes that generate the hexagon cross.
-		public void generateHexPrimes()
+		Pair<Integer> sizeOfLargestCrossPrime = new Pair<Integer>(largestCrossCountLeft,largestCrossCountRight);
+		return sizeOfLargestCrossPrime;
+	}
+	
+	// Return the number of primes
+	public int primeCount()
+	{
+		return primeList.size();
+	}
+	
+	// Return the number of primes
+		public int twinPrimeCount()
 		{
-			
-			//sTEP1: Making twin prime numbers array
-			for (int i = 2; i <length; i++) {
-                
-	            if (twin_Prime(i) && twin_Prime(i + 2)) {
-	            	
-	            	arr_storeprime[count3]=BigInteger.valueOf(i);
-	            	
-	            	count3++;
-	            	
-	            arr_storeprime[count3]=BigInteger.valueOf(i+2);
-	           
-	            	count3++;
-	            	
-	                
-	            }
-	        }
-			
-			
-			//Step2: 
-			//Loop1: First get 1sthex 
-			for(int x=2; x<counttwinprime*2-2; x=x+2)
-			{
-				   BigInteger hex1=arr_storeprime[x];
-				   
-				   hex1=hex1.add(new BigInteger("1"));
-				   sep1[sep1count]=hex1;
-				 
-				   
-				   hex1=hex1.multiply(new BigInteger("2"));
-				   
-				   
-				   for(int y=4; y<counttwinprime*2-4; y=y+2)
-				   {
-				   
-                 BigInteger hex2=arr_storeprime[y];
-				   
-				   hex2=hex2.add(new BigInteger("1"));
-				   
-				   
-				   int compare;
-				   
-				   compare=hex1.compareTo(hex2);
-				   
-				   if(compare==0)
-				   {
-					   
-					   arr_hexprime[hexcount]=arr_storeprime[x];
-					   hexcount++;
-					   arr_hexprime[hexcount]=arr_storeprime[x+1];
-					   hexcount++;
-					   
-					   arr_hexprime[hexcount]=arr_storeprime[y];
-					   hexcount++;
-					   
-					   arr_hexprime[hexcount]=arr_storeprime[y+1];
-					   hexcount++;
-					   
-					  
-						 sep1count++;
-						 
-						 sep2[sep2count]=hex2;
-						   sep2count++;
-					   
-					   //System.out.println(arr_twinprime[x]);
-						//System.out.println(arr_twinprime[x+1]);
-						 //System.out.println(arr_twinprime[y]);
-							//System.out.println(arr_twinprime[y+1]);
-					   
-							//System.out.println(sep1);
-							//System.out.println(sep2);
-							
-							
-					   
-				   }
-			
-			}
-			
-	//		
+			return twinPrimeList.size();
+		}
+	
+	// emove last element of primes
+	public void removeLast()
+	{
+		if( primeList.size() > 0 )
+	    	primeList.remove( primeList.size() - 1 );
+	}
+	
+	// Return the number of crosses.
+	public int crossesCount()
+	{
+		return crossList.size();
+	}
+	
+	public class IterablePrimes implements Iterable<BigInteger>
+	{
+
+		@Override
+		public Iterator<BigInteger> iterator() {
+			// TODO Auto-generated method stub
+			return primeList.iterator();
+		}		
 		
+	}
+	
+	public IterablePrimes iteratePrimes() 
+	{ 
+		return new IterablePrimes();
+	}
+
+	public class IterableCrosses implements Iterable<Pair<BigInteger>>
+	{
+
+		@Override
+		public Iterator<Pair<BigInteger>> iterator() {
+			// TODO Auto-generated method stub
+			return crossList.iterator();
+		}		
+	}
+	
+	public IterableCrosses iterateCrosses() 
+	{ 
+		return new IterableCrosses();
+	}
+
+
 }
-}
-}		
-	   
